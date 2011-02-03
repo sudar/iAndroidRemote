@@ -2,4 +2,8 @@
 <resources>
     <string name="hello">Hello World, AdjustVolume!</string>
     <string name="app_name">AdjustVolume</string>
+    <string name="reduce">Reduce Volume</string>
+    <string name="increase">Increase Volume</string>
+    <string name="next">Next Song</string>
+    <string name="prev">Previous Song</string>
 </resources>

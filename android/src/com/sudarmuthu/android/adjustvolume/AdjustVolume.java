@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,6 +18,7 @@ public class AdjustVolume extends Activity {
 	
     protected static final String TAG = "AdjustVolume";
 	private boolean isHtc;
+	private MediaPlayerServiceConnection musicConn;
 
 	/** Called when the activity is first created. */
     @Override
@@ -26,7 +28,7 @@ public class AdjustVolume extends Activity {
         
         final AudioManager audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
         
-        Button upButton = (Button) findViewById(R.id.Button01);
+        Button upButton = (Button) findViewById(R.id.upButton);
         upButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -36,7 +38,7 @@ public class AdjustVolume extends Activity {
 			}
 		});
         
-        Button downButton = (Button) findViewById(R.id.Button02);
+        Button downButton = (Button) findViewById(R.id.downButton);
         downButton.setOnClickListener(new OnClickListener() {
         	
         	@Override
@@ -45,34 +47,55 @@ public class AdjustVolume extends Activity {
 				audioManager.adjustVolume(AudioManager.ADJUST_LOWER, AudioManager.FLAG_PLAY_SOUND);        		
         	}
         });
+        
+        Button nextButton = (Button) findViewById(R.id.nextTrack);
+        nextButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+        		Log.d(TAG, "Next Button Clicked");
+				try {
+					musicConn.nextSong();
+				} catch (RemoteException e) {
+					Log.i(TAG, "Error while moving to next song");					
+					e.printStackTrace();
+				}
+			}
+		});
+        
+        Button prevButton = (Button) findViewById(R.id.prevTrack);
+        prevButton.setOnClickListener(new OnClickListener() {
+        	
+        	@Override
+        	public void onClick(View v) {
+        		Log.d(TAG, "Prev Button Clicked");
+        		try {
+        			musicConn.prevSong();
+        		} catch (RemoteException e) {
+        			Log.i(TAG, "Error while moving to prev song");					
+        			e.printStackTrace();
+        		}
+        	}
+        });
     }
     
 	@Override
 	protected void onStart() {
 		super.onStart();
-		// in order to receive broadcasted intents we need to register our receiver
-//		registerReceiver(arduinoReceiver, new IntentFilter(AmarinoIntent.ACTION_RECEIVED));
 
 		Intent i = new Intent();
-		ServiceConnection conn = new MediaPlayerServiceConnection();
+		musicConn = new MediaPlayerServiceConnection();
 		
 		isHtc = true;
 		i.setClassName("com.htc.music", "com.htc.music.MediaPlaybackService");
 		
-        if (!this.bindService(i, conn, Context.MODE_PRIVATE)) {
+        if (!this.bindService(i, musicConn, Context.MODE_PRIVATE)) {
         	isHtc = false;
             i.setClassName("com.android.music", "com.android.music.MediaPlaybackService");
-            this.bindService(i, conn, Context.MODE_PRIVATE);
+            this.bindService(i, musicConn, Context.MODE_PRIVATE);
         }
 		
-//		i.setClassName("com.android.music", "com.android.music.MediaPlaybackService");
-//		 
-//		this.bindService(i, conn, Context.MODE_PRIVATE);
-        
 		Log.d(TAG, "Binded Service");
-				
-		// this is how you tell Amarino to connect to a specific BT device from within your own code
-//		Amarino.connect(this, DEVICE_ADDRESS);
 	}
 
 
@@ -129,6 +152,33 @@ public class AdjustVolume extends Activity {
 				Log.i("MediaPlayerServiceConnection", "Some Exception");
 	    		e.printStackTrace();
 	    		throw new RuntimeException(e);
+			}
+		}
+
+		/**
+		 * Selects the next song
+		 * 
+		 * @throws RemoteException 
+		 * 
+		 */
+		public void nextSong() throws RemoteException {
+			if (isHtc) {
+				mServiceHtc.next();
+			} else {
+				mServiceAndroid.next();
+			}
+		}
+		
+		/**
+		 * Selects the Previous song
+		 * 
+		 * @throws RemoteException
+		 */
+		public void prevSong() throws RemoteException {
+			if (isHtc) {
+				mServiceHtc.prev();
+			} else {
+				mServiceAndroid.prev();
 			}
 		}
 
