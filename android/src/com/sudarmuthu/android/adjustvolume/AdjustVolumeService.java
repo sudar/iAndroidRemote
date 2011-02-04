@@ -1,6 +1,22 @@
 /**
- * 
- */
+   iAndroidRemote - Control your Android phone's music player using Apple Remote 
+    
+   Copyright 2011  Sudar Muthu  (email : sudar@sudarmuthu.com)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License, version 2, as
+    published by the Free Software Foundation.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
 package com.sudarmuthu.android.adjustvolume;
 
 import android.app.Service;
@@ -15,17 +31,21 @@ import android.os.RemoteException;
 import android.util.Log;
 
 /**
- * @author "Sudar Muthu (sudarm@)"
+ * The Android service which interacts with the Music Player service
+ * 
+ * @author "Sudar Muthu (http://sudarmuthu.com)"
  *
  */
 public class AdjustVolumeService extends Service {
-	private static final String TAG = "AdjustVolumeService";
+	private static final String TAG = "iAndroidRemote";
 	
-	AudioManager audioManager;
+	private AudioManager audioManager;
 	private boolean isHtc; // Flag to identify whether the phone is using HTC Music player
-	private MediaPlayerServiceConnection musicConn;
+	private MediaPlayerServiceConnection musicConn; //handler to music player service
 
-	/* (non-Javadoc)
+	/**
+	 * When the service is created for the first time
+	 * 		 
 	 * @see android.app.Service#onCreate()
 	 */
 	@Override
@@ -39,11 +59,14 @@ public class AdjustVolumeService extends Service {
 		isHtc = true;
 		
 		Intent i = new Intent();
+		
+		// First try to connect to HTC Music player service
 		i.setClassName("com.htc.music", "com.htc.music.MediaPlaybackService");
 		
         if (!context.bindService(i, musicConn, Context.MODE_PRIVATE)) {
         	Log.d(TAG, "Using built-in media player");
         	
+        	// Default to Android's Music Player service
         	isHtc = false;
             i.setClassName("com.android.music", "com.android.music.MediaPlaybackService");
             context.bindService(i, musicConn, Context.MODE_PRIVATE);
@@ -52,19 +75,9 @@ public class AdjustVolumeService extends Service {
 		super.onCreate();
 	}
 
-	/* (non-Javadoc)
-	 * @see android.app.Service#onDestroy()
-	 */
-	@Override
-	public void onDestroy() {
-		Log.d(TAG, "Service Destroyed");
-		
-		audioManager = null;
-		musicConn = null;
-		super.onDestroy();
-	}
-
-	/* (non-Javadoc)
+	/**
+	 * When the service is started
+	 * 
 	 * @see android.app.Service#onStart(android.content.Intent, int)
 	 */
 	@Override
@@ -73,16 +86,19 @@ public class AdjustVolumeService extends Service {
 		Bundle bundle = intent.getExtras();
 		String data = bundle.getString("Data");
 
+		// Increase volume
 		if (data.equals("Plus")) {
 			Log.d(TAG, "Increased Volume");
 			audioManager.adjustVolume(AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND + AudioManager.FLAG_SHOW_UI);
 		}
 
+		// Decrease volume
 		if (data.equals("Minus")) {
 			Log.d(TAG, "Decreased Volume");			
 			audioManager.adjustVolume(AudioManager.ADJUST_LOWER, AudioManager.FLAG_PLAY_SOUND + AudioManager.FLAG_SHOW_UI);
 		}
 
+		// Select Next song
 		if (data.equals("Next")) {
 			Log.d(TAG, "Next Song");
 			try {
@@ -93,6 +109,7 @@ public class AdjustVolumeService extends Service {
 			}
 		}
 		
+		// Select Previous song
 		if (data.equals("Prev")) {
 			Log.d(TAG, "Prev Song");
 			try {
@@ -103,6 +120,7 @@ public class AdjustVolumeService extends Service {
 			}
 		}
 		
+		// Play/Pause song
 		if (data.equals("Center")) {
 			Log.d(TAG, "Play/Pausing Song");
 			try {
@@ -116,6 +134,21 @@ public class AdjustVolumeService extends Service {
 		super.onStart(intent, startId);
 	}
 	
+	/**
+	 * When the service is destroyed.
+	 * 
+	 * @see android.app.Service#onDestroy()
+	 */
+	@Override
+	public void onDestroy() {
+		Log.d(TAG, "Service Destroyed");
+
+		// clean up
+		audioManager = null;
+		musicConn = null;
+		super.onDestroy();
+	}
+
 	/* (non-Javadoc)
 	 * @see android.app.Service#onBind(android.content.Intent)
 	 */
@@ -127,13 +160,17 @@ public class AdjustVolumeService extends Service {
 	/**
 	 * Media Player Service Connection Service 
 	 * 
-	 * @author "Sudar Muthu (sudarm@)"
+	 * @author "Sudar Muthu (http://sudarmuthu.com)"
 	 *
 	 */
 	private class MediaPlayerServiceConnection implements ServiceConnection {
-    	public com.htc.music.IMediaPlaybackService mServiceHtc;
-    	public com.android.music.IMediaPlaybackService mServiceAndroid;
+		
+    	public com.htc.music.IMediaPlaybackService mServiceHtc; // HTC Music Player service
+    	public com.android.music.IMediaPlaybackService mServiceAndroid; // Default Android Music Player service
 
+    	/**
+    	 * When the service is started
+    	 */
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			Log.d(TAG, "Connected to service: " + name.getClassName());
@@ -147,7 +184,7 @@ public class AdjustVolumeService extends Service {
 		}
 
 		/**
-		 * Selects the next song
+		 * Select the next song
 		 * 
 		 * @throws RemoteException 
 		 * 
@@ -161,7 +198,7 @@ public class AdjustVolumeService extends Service {
 		}
 		
 		/**
-		 * Selects the Previous song
+		 * Select the Previous song
 		 * 
 		 * @throws RemoteException
 		 */
@@ -194,6 +231,9 @@ public class AdjustVolumeService extends Service {
 			}
 		}
 		
+		/**
+		 * When the service is disconnected
+		 */
 		@Override		
 		public void onServiceDisconnected(ComponentName name) {
 			Log.d(TAG, "Disconnected from service");

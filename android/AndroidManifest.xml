@@ -6,12 +6,14 @@
       
     <application android:icon="@drawable/icon" android:label="@string/app_name">
     
+    	<!--Broadcast Receiver to receive Events from Amarino  -->
         <receiver android:name="EventReceiver">
 			<intent-filter>
                 <action android:name="amarino.intent.action.RECEIVED" />
             </intent-filter>
         </receiver>
         
+        <!-- Service which will be called by the broadcast receiver -->
         <service android:name="AdjustVolumeService">
         </service>
         
