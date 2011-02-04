@@ -30,7 +30,7 @@ import at.abraxas.amarino.AmarinoIntent;
  * @author "Sudar Muthu (http://sudarmuthu.com)"
  *
  */
-public class EventReceiver extends BroadcastReceiver {
+public class AmarinoEventReceiver extends BroadcastReceiver {
 
     protected static final String TAG = "iAndroidRemote";
 	
