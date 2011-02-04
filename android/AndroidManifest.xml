@@ -6,20 +6,15 @@
       
     <application android:icon="@drawable/icon" android:label="@string/app_name">
     
-        <activity android:name=".AdjustVolume"
-                  android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        
         <receiver android:name="EventReceiver">
 			<intent-filter>
                 <action android:name="amarino.intent.action.RECEIVED" />
             </intent-filter>
         </receiver>
-
+        
+        <service android:name="AdjustVolumeService">
+        </service>
+        
     </application>
     
 </manifest> 
