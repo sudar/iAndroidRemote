@@ -37,6 +37,14 @@ import android.util.Log;
  *
  */
 public class AdjustVolumeService extends Service {
+	
+	// Remote button
+	private static final String REMOTE_CENTER_BUTTON = "Center";
+	private static final String REMOTE_PREVIOUS_BUTTON = "Prev";
+	private static final String REMOTE_NEXT_BUTTON = "Next";
+	private static final String REMOTE_MINUS_BUTTON = "Minus";
+	private static final String REMOTE_PLUS_BUTTON = "Plus";
+
 	private static final String TAG = "iAndroidRemote";
 	
 	private AudioManager audioManager;
@@ -87,19 +95,19 @@ public class AdjustVolumeService extends Service {
 		String data = bundle.getString("Data");
 
 		// Increase volume
-		if (data.equals("Plus")) {
+		if (data.equals(REMOTE_PLUS_BUTTON)) {
 			Log.d(TAG, "Increased Volume");
 			audioManager.adjustVolume(AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND + AudioManager.FLAG_SHOW_UI);
 		}
 
 		// Decrease volume
-		if (data.equals("Minus")) {
+		if (data.equals(REMOTE_MINUS_BUTTON)) {
 			Log.d(TAG, "Decreased Volume");			
 			audioManager.adjustVolume(AudioManager.ADJUST_LOWER, AudioManager.FLAG_PLAY_SOUND + AudioManager.FLAG_SHOW_UI);
 		}
 
 		// Select Next song
-		if (data.equals("Next")) {
+		if (data.equals(REMOTE_NEXT_BUTTON)) {
 			Log.d(TAG, "Next Song");
 			try {
 				musicConn.nextSong();
@@ -110,7 +118,7 @@ public class AdjustVolumeService extends Service {
 		}
 		
 		// Select Previous song
-		if (data.equals("Prev")) {
+		if (data.equals(REMOTE_PREVIOUS_BUTTON)) {
 			Log.d(TAG, "Prev Song");
 			try {
 				musicConn.prevSong();
@@ -121,7 +129,7 @@ public class AdjustVolumeService extends Service {
 		}
 		
 		// Play/Pause song
-		if (data.equals("Center")) {
+		if (data.equals(REMOTE_CENTER_BUTTON)) {
 			Log.d(TAG, "Play/Pausing Song");
 			try {
 				musicConn.playPause();
