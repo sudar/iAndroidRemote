@@ -7,14 +7,14 @@
     <application android:icon="@drawable/icon" android:label="@string/app_name">
     
     	<!--Broadcast Receiver to receive Events from Amarino  -->
-        <receiver android:namecom.sudarmuthu.android.iandroidremote.EventReceiverer">
+        <receiver android:name="com.sudarmuthu.android.iandroidremote.EventReceiver">
 			<intent-filter>
                 <action android:name="amarino.intent.action.RECEIVED" />
             </intent-filter>
         </receiver>
         
         <!-- Service which will be called by the broadcast receiver -->
-        <service android:namecom.sudarmuthu.android.iandroidremote.AdjustVolumeServicece">
+        <service android:name="com.sudarmuthu.android.iandroidremote.AdjustVolumeService">
         </service>
         
     </application>
