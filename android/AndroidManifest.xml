@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="com.sudarmuthu.android.adjustvolume"
+      package="com.sudarmuthu.android.iandroidremote"
       android:versionCode="1"
       android:versionName="1.0">
       
     <application android:icon="@drawable/icon" android:label="@string/app_name">
     
     	<!--Broadcast Receiver to receive Events from Amarino  -->
-        <receiver android:name="EventReceiver">
+        <receiver android:namecom.sudarmuthu.android.iandroidremote.EventReceiverer">
 			<intent-filter>
                 <action android:name="amarino.intent.action.RECEIVED" />
             </intent-filter>
         </receiver>
         
         <!-- Service which will be called by the broadcast receiver -->
-        <service android:name="AdjustVolumeService">
+        <service android:namecom.sudarmuthu.android.iandroidremote.AdjustVolumeServicece">
         </service>
         
     </application>

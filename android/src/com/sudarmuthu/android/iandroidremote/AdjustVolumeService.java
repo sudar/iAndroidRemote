@@ -17,7 +17,7 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-package com.sudarmuthu.android.adjustvolume;
+package com.sudarmuthu.android.iandroidremote;
 
 import android.app.Service;
 import android.content.ComponentName;
